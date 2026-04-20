@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Application Data
+    match /panels/{panelId} {
+      allow read, write: if isSignedIn() && isValidId(panelId);
+    }
+
+    match /taskDefinitions/{defId} {
+      allow read, write: if isSignedIn() && isValidId(defId);
+    }
+
+    match /tasks/{taskId} {
+      allow read, write: if isSignedIn() && isValidId(taskId);
+    }
+
+    match /pendencies/{pendId} {
+      allow read, write: if isSignedIn() && isValidId(pendId);
+    }
+
+    match /transactions/{txId} {
+      allow read, write: if isSignedIn() && isValidId(txId);
+    }
+
+    match /config/settings {
+      allow read, write: if isSignedIn();
+    }
+
+    // User profiles / login mapping
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // Connection test doc
+    match /_connection_test/status {
+      allow read: if true;
+    }
+  }
+}
