@@ -16,9 +16,9 @@ import { Calendar } from './pages/Calendar';
 import { Login } from './pages/Login';
 import { usePanelStore } from './store/usePanelStore';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { Toaster } from '@/components/ui/sonner';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
+import { Toaster } from './components/ui/sonner';
+import { TooltipProvider } from './components/ui/tooltip';
+import { cn } from './lib/utils';
 
 export default function App() {
   return (
