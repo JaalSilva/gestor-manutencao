@@ -22,3 +22,7 @@ export default defineConfig(({mode}) => {
     },
   };
 });
+export default defineConfig({
+  root: 'src', // Isso diz ao Vite: "Ei, comece a procurar tudo dentro da pasta src!"
+  // ... resto das suas configurações
+})
