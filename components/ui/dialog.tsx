@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 
@@ -9,25 +11,17 @@ function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
 }
 
-const DialogTrigger = React.forwardRef<
-  HTMLButtonElement,
-  DialogPrimitive.Trigger.Props
->(({ ...props }, ref) => {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} ref={ref} />
-})
-DialogTrigger.displayName = "DialogTrigger"
+function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
+  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
+}
 
 function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
 }
 
-const DialogClose = React.forwardRef<
-  HTMLButtonElement,
-  DialogPrimitive.Close.Props
->(({ ...props }, ref) => {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} ref={ref} />
-})
-DialogClose.displayName = "DialogClose"
+function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
+  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
+}
 
 function DialogOverlay({
   className,
