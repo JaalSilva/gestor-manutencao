@@ -113,6 +113,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setView, isOpen, o
               active={activeView === 'library'} 
               onClick={() => { setView('library'); if (window.innerWidth < 1024) onClose(); }}
             />
+            <NavItem 
+              icon={FileText} 
+              label={isOpen ? "Ordens de Serviço" : ""} 
+              active={activeView === 'service-orders'} 
+              onClick={() => { setView('service-orders'); if (window.innerWidth < 1024) onClose(); }}
+            />
 
             <Separator className="my-4" />
             {isOpen && <p className="px-3 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 animate-in fade-in duration-500">Financeiro</p>}
@@ -165,29 +171,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setView, isOpen, o
           )}
           
           <div className="mt-4 flex items-center gap-3 px-2 border-t pt-4 border-slate-100 min-h-[50px]">
-            <div className="h-8 w-8 shrink-0 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-[10px] font-bold text-blue-600 uppercase">
-              {user?.login?.substring(0, 2) || 'JD'}
+            <div className="h-8 w-8 shrink-0 rounded-full bg-blue-600 border border-blue-700 flex items-center justify-center text-[10px] font-bold text-white uppercase shadow-lg shadow-blue-500/20">
+              SH
             </div>
             {isOpen && (
               <div className="flex-1 overflow-hidden animate-in fade-in duration-500">
-                <p className="truncate text-sm font-bold text-slate-700">{user?.login || 'John Doe'}</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                  {user?.role === 'admin' ? 'Administrador' : 'Convidado'}
-                </p>
+                <p className="truncate text-sm font-bold text-slate-700">Sincronismo Online</p>
+                <div className="flex items-center gap-1.5">
+                  <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                    Ativo agora
+                  </p>
+                </div>
               </div>
-            )}
-            {isOpen && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 text-slate-400 hover:text-red-500 shrink-0"
-                onClick={() => {
-                  localStorage.removeItem('auth_token');
-                  window.location.reload();
-                }}
-              >
-                <LogOut className="h-4 w-4" />
-              </Button>
             )}
           </div>
         </div>

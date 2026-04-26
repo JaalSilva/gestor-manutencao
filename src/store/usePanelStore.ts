@@ -17,7 +17,8 @@ const INITIAL_PANELS: PanelTemplate[] = [
 export const usePanelStore = create<AppState>()(
   (set, get) => ({
     settings: {
-      appName: 'GESTÃO DE MANUTENÇÃO',
+      appName: 'JW HUB MANUTENÇÃO',
+      appLogo: 'https://cdn-icons-png.flaticon.com/512/281/281764.png', // Generic professional G icon
       primaryColor: '#0f172a',
       accentColors: ['#0f172a', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
       backgroundColor: '#f8fafc',
@@ -30,6 +31,7 @@ export const usePanelStore = create<AppState>()(
     pendencies: [],
     transactions: [],
     events: [],
+    serviceOrders: [],
     balanceAlertVisible: false,
     isHydrated: false,
     panels: INITIAL_PANELS,
@@ -287,6 +289,25 @@ export const usePanelStore = create<AppState>()(
     deleteEvent: async (id) => {
       set((state) => ({ events: state.events.filter(e => e.id !== id) }));
       await syncService.deleteEvent(id);
+    },
+
+    // Service Orders
+    addServiceOrder: async (os) => {
+      set((state) => ({ serviceOrders: [os, ...state.serviceOrders] }));
+      await syncService.saveServiceOrder(os);
+    },
+    updateServiceOrder: async (id, osUpdates) => {
+      const os = get().serviceOrders.find(o => o.id === id);
+      if (!os) return;
+      const updated = { ...os, ...osUpdates };
+      set((state) => ({
+        serviceOrders: state.serviceOrders.map(o => o.id === id ? updated : o)
+      }));
+      await syncService.saveServiceOrder(updated);
+    },
+    deleteServiceOrder: async (id) => {
+      set((state) => ({ serviceOrders: state.serviceOrders.filter(o => o.id !== id) }));
+      await syncService.deleteServiceOrder(id);
     },
   })
 );

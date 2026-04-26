@@ -1,6 +1,6 @@
 {
-  "name": "Amigos da Bola ⚽",
-  "description": "Sistema profissional de gestão financeira e estatísticas para grupos de futebol. Inclui cobrança automatizada, fair play, ranking e integração com nuvem.",
+  "name": "Gerente de Manutenção Local",
+  "description": "Aplicação web enterprise para gestão de compliance, equipes e execução de fichas de manutenção técnica com exportação em A3 e A4.",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }

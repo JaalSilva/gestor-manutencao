@@ -5,7 +5,6 @@ import {
   Clock, ShieldCheck, ChevronRight, X, Send, Printer
 } from 'lucide-react';
 import { usePanelStore } from '../store/usePanelStore';
-import { useAuth } from '../contexts/AuthContext';
 import { TaskDefinition, AppSettings, Team } from '../types';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { ServiceOrderPDF } from '../services/pdf/ServiceOrderPDF';
@@ -36,7 +35,6 @@ import { Separator } from '@/components/ui/separator';
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 export const Library: React.FC = () => {
-  const { isGuest } = useAuth();
   const { 
     taskDefinitions, addTaskDefinition, updateTaskDefinition, 
     deleteTaskDefinition, panels, settings,
@@ -519,7 +517,6 @@ export const Library: React.FC = () => {
                       teamName={panels.flatMap(p => p.teams).find(t => t.id === selectedTeamId)?.name || "Equipe Não Definida"}
                       members={[]}
                       date={new Date().toISOString()}
-                      isGuest={isGuest}
                     />
                   }
                   fileName={`OS_${viewingDef.name}.pdf`}

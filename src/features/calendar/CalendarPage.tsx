@@ -141,7 +141,6 @@ export const CalendarPage: React.FC = () => {
                 events={events.filter(e => isSameMonth(parseISO(e.date), currentMonth))} 
                 monthName={format(currentMonth, 'MMMM yyyy', { locale: ptBR })} 
                 settings={settings} 
-                isGuest={isGuest}
               />
             }
             fileName={`Agenda_${format(currentMonth, 'MM_yyyy')}.pdf`}
@@ -420,7 +419,7 @@ export const CalendarPage: React.FC = () => {
               <DialogHeader>
                 <div className="flex items-center gap-2 mb-4">
                   <Badge className={getTypeStyle(viewingEvent.type)}>
-                    {viewingEvent.status === 'requested' ? 'SOLICITAÇÃO' : viewingEvent.type.toUpperCase()}
+                    {viewingEvent.status === 'requested' ? 'SOLICITAÇÃO' : (viewingEvent?.type || '').toUpperCase()}
                   </Badge>
                   {viewingEvent.status === 'confirmed' && (
                     <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 gap-1">

@@ -25,7 +25,6 @@ import { Transaction, OriginName } from '../../types';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { S26TReport } from '../../services/pdf/S26TReport';
 import { AnnualReport } from '../../services/pdf/AnnualReport';
-import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
 
 export const TreasuryPage: React.FC = () => {
@@ -34,8 +33,6 @@ export const TreasuryPage: React.FC = () => {
     updateTransaction, clearFinanceStore, balanceAlertVisible, 
     getBalance, settings 
   } = usePanelStore();
-  
-  const { isGuest } = useAuth();
   
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -463,7 +460,6 @@ export const TreasuryPage: React.FC = () => {
                      taskDefinitions={usePanelStore.getState().taskDefinitions}
                      commissionMembers={settings.commissionMembers}
                      appName={settings.appName}
-                     isGuest={isGuest}
                    />}
                    fileName={`Relatorio_Anual_${new Date().getFullYear()}.pdf`}
                  >
@@ -476,7 +472,7 @@ export const TreasuryPage: React.FC = () => {
                  </PDFDownloadLink>
 
                  <PDFDownloadLink
-                   document={<S26TReport monthRef={formData.monthReference || ''} transactions={transactions} settings={settings} isGuest={isGuest} />}
+                   document={<S26TReport monthRef={formData.monthReference || ''} transactions={transactions} settings={settings} />}
                    fileName={`S26T_${formData.monthReference?.replace('/', '_')}.pdf`}
                  >
                    {({ loading }) => (

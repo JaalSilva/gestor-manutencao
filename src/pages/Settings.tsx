@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Palette, Type, Save, Moon,
+  Palette, Type, Save, Moon, FileText,
   Smartphone, Shield, Database, Trash2, 
-  Download, Lock, Key, AlertCircle, AlertTriangle
+  Download, Lock, Key, AlertCircle, AlertTriangle, RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
@@ -17,6 +17,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription 
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { syncService } from '../services/syncService';
 
 const CORPORATE_PALETTES = [
   { name: 'Azul Cobalto', primary: '#0f172a', accent: '#3b82f6' },
@@ -27,6 +28,7 @@ const CORPORATE_PALETTES = [
 ];
 
 import { UserAccountSettings } from '../components/settings/UserAccountSettings';
+import LogoUpload from '../components/LogoUpload';
 
 export const Settings: React.FC = () => {
   const { settings, updateSettings, taskDefinitions, tasks, pendencies } = usePanelStore();
@@ -69,6 +71,21 @@ export const Settings: React.FC = () => {
     toast.success("Senha de segurança atualizada!");
   };
 
+  const [googleConnected, setGoogleConnected] = useState<boolean | null>(null);
+
+  React.useEffect(() => {
+    syncService.getGoogleSyncStatus().then(status => setGoogleConnected(status.connected));
+  }, []);
+
+  const handleConnectGoogle = async () => {
+    try {
+      const authUrl = await syncService.getGoogleAuthUrl();
+      window.location.href = authUrl;
+    } catch (err) {
+      toast.error("Erro ao obter URL de autenticação.");
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between">
@@ -85,6 +102,49 @@ export const Settings: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <section className="space-y-4">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-1">Nuvem & Sincronização</h2>
+            <Card className="rounded-2xl border-slate-100 shadow-sm overflow-hidden">
+               <CardHeader className="bg-slate-50/50">
+                  <CardTitle className="text-xs font-black uppercase tracking-tight flex items-center gap-2">
+                    <Database className="h-4 w-4 text-green-600" /> Google Cloud Integration
+                  </CardTitle>
+               </CardHeader>
+               <CardContent className="p-6 space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div className="flex items-center gap-4">
+                      <div className={cn(
+                        "h-12 w-12 rounded-xl flex items-center justify-center shadow-sm transition-colors",
+                        googleConnected ? "bg-green-100 text-green-600" : "bg-slate-100 text-slate-400"
+                      )}>
+                        <RefreshCw className={cn("h-6 w-6", googleConnected && "animate-spin-slow")} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-black text-slate-900 leading-none">Google Sheets Connector</p>
+                        <p className="text-[10px] text-slate-500 mt-1">Sincroniza OS, Custos e Equipamentos</p>
+                      </div>
+                    </div>
+                    {googleConnected ? (
+                      <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none font-black text-[9px] px-3 py-1 uppercase tracking-widest">
+                        Conectado
+                      </Badge>
+                    ) : (
+                      <Button 
+                        size="sm" 
+                        onClick={handleConnectGoogle}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-black uppercase text-[10px] tracking-widest px-6"
+                      >
+                        Conectar
+                      </Button>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-slate-400 px-1">
+                    * Após a conexão, o sistema criará automaticamente a planilha "Gestão de Manutenção - Dados" em seu Drive.
+                  </p>
+               </CardContent>
+            </Card>
+          </section>
+
+          <section className="space-y-4">
             <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-1">Segurança & Acesso</h2>
             <UserAccountSettings />
           </section>
@@ -98,7 +158,36 @@ export const Settings: React.FC = () => {
                   </CardTitle>
                </CardHeader>
                <CardContent className="p-6 space-y-6">
-                  <div className="space-y-3">
+                  <div className="space-y-4">
+                    <Label className="text-[10px] font-black uppercase text-slate-400">Logótipo da Aplicação (Ícone & Branding)</Label>
+                    <div className="flex flex-col sm:flex-row items-center gap-6 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+                      <div className="h-20 w-20 min-w-[80px] rounded-2xl bg-white border border-slate-100 flex items-center justify-center overflow-hidden shadow-sm">
+                         {settings.appLogo ? (
+                           <img src={settings.appLogo} alt="App Logo" className="h-full w-full object-contain" />
+                         ) : (
+                           <Smartphone className="h-8 w-8 text-slate-200" />
+                         )}
+                      </div>
+                      <div className="flex-1 w-full space-y-3">
+                         <div className="flex gap-2">
+                           <LogoUpload />
+                           {settings.appLogo && (
+                             <Button 
+                               variant="ghost" 
+                               size="icon" 
+                               className="h-10 w-10 text-red-500 hover:text-red-600 hover:bg-red-50"
+                               onClick={() => updateSettings({ appLogo: '' })}
+                             >
+                               <Trash2 className="h-4 w-4" />
+                             </Button>
+                           )}
+                         </div>
+                         <p className="text-[9px] text-slate-400 font-medium">Recomendado: 512x512px. A logo será salva na nuvem e sincronizada entre todos os perfis.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 border-t pt-6">
                     <Label className="text-[10px] font-black uppercase text-slate-400">Paletas Corporativas</Label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                        {CORPORATE_PALETTES.map(p => (
@@ -132,7 +221,52 @@ export const Settings: React.FC = () => {
                          onChange={(e) => updateSettings({ primaryColor: e.target.value })}
                          className="h-8 w-8 rounded-lg cursor-pointer bg-transparent border-none"
                        />
-                       <span className="text-[10px] font-mono font-bold pr-2">{settings.primaryColor.toUpperCase()}</span>
+                       <span className="text-[10px] font-mono font-bold pr-2">{settings?.primaryColor?.toUpperCase() || ''}</span>
+                    </div>
+                  </div>
+               </CardContent>
+            </Card>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-1">Configuração de Ordens de Serviço</h2>
+            <Card className="rounded-2xl border-slate-100 shadow-sm overflow-hidden">
+               <CardHeader className="bg-slate-50/50">
+                  <CardTitle className="text-xs font-black uppercase tracking-tight flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-orange-600" /> Parametrização O.S.
+                  </CardTitle>
+               </CardHeader>
+               <CardContent className="p-6 space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase text-slate-400">Título Principal do PDF</Label>
+                      <Input 
+                        placeholder="Ex: MODELO DE O.S. PMOC - MANUTENÇÃO"
+                        value={settings.osTitle || ''} 
+                        onChange={(e) => updateSettings({ osTitle: e.target.value })}
+                        className="bg-slate-50 border-slate-200"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase text-slate-400">Subtítulo do PDF</Label>
+                      <Input 
+                        placeholder="Ex: EMISSÃO DE FICHA DE TRABALHO TÉCNICO"
+                        value={settings.osSubTitle || ''} 
+                        onChange={(e) => updateSettings({ osSubTitle: e.target.value })}
+                        className="bg-slate-50 border-slate-200"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase text-slate-400">Próximo Número de O.S.</Label>
+                      <Input 
+                        type="number"
+                        placeholder="1000"
+                        value={settings.nextOsNumber || 1000} 
+                        onChange={(e) => updateSettings({ nextOsNumber: parseInt(e.target.value) || 1000 })}
+                        className="bg-slate-50 border-slate-200 font-mono"
+                      />
                     </div>
                   </div>
                </CardContent>

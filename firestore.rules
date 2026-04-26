@@ -1,107 +1,53 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Default Deny
+    // Default deny
     match /{document=**} {
       allow read, write: if false;
     }
 
-    // --- Helpers ---
     function isSignedIn() {
       return request.auth != null;
-    }
-
-    function isEmailVerified() {
-      return isSignedIn() && request.auth.token.email_verified == true;
-    }
-
-    function isOwner() {
-      return isSignedIn() && request.auth.token.email == 'jaazielss@gmail.com';
-    }
-
-    function isAdmin() {
-      return isOwner() || (isEmailVerified() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
     }
 
     function isValidId(id) {
       return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
     }
 
-    function incoming() {
-      return request.resource.data;
+    // Application Data
+    match /panels/{panelId} {
+      allow read, write: if isSignedIn() && isValidId(panelId);
     }
 
-    function existing() {
-      return resource.data;
+    match /taskDefinitions/{defId} {
+      allow read, write: if isSignedIn() && isValidId(defId);
     }
 
-    // --- Collections ---
+    match /tasks/{taskId} {
+      allow read, write: if isSignedIn() && isValidId(taskId);
+    }
 
-    // Players
-    match /players/{playerId} {
-      function isValidPlayer(data) {
-        return data.id is string && data.name is string && data.name.size() <= 100 &&
-               data.phone is string && data.phone.size() <= 20 &&
-               (data.age == null || data.age is int || data.age is string) &&
-               data.status_payment in ['PAGO', 'PENDENTE'];
-      }
+    match /pendencies/{pendId} {
+      allow read, write: if isSignedIn() && isValidId(pendId);
+    }
+
+    match /transactions/{txId} {
+      allow read, write: if isSignedIn() && isValidId(txId);
+    }
+
+    match /config/settings {
+      allow read, write: if isSignedIn();
+    }
+
+    // User profiles / login mapping
+    match /users/{userId} {
       allow read: if isSignedIn();
-      allow create: if isAdmin() && isValidId(playerId) && isValidPlayer(incoming());
-      allow update: if isAdmin() && isValidPlayer(incoming()) && (
-        incoming().diff(existing()).affectedKeys().hasOnly(['name', 'phone', 'congregation', 'age', 'status_payment', 'payment_date', 'updated_at'])
-      );
-      allow delete: if isAdmin();
+      allow write: if isSignedIn() && request.auth.uid == userId;
     }
-
-    // App Settings
-    match /app_settings/{settingId} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
-    }
-
-    // Attendance
-    match /attendance/{logId} {
-      allow read: if isSignedIn();
-      allow create: if isAdmin() && isValidId(logId);
-      allow delete: if isAdmin();
-    }
-
-    // Fair Play
-    match /fair_play/{fpId} {
-      allow read: if isSignedIn();
-      allow create: if isAdmin() && isValidId(fpId);
-      allow delete: if isAdmin();
-    }
-
-    // Matches
-    match /matches/{matchId} {
-      allow read: if isSignedIn();
-      allow create: if isAdmin() && isValidId(matchId);
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // Senders
-    match /senders/{senderId} {
-      allow read, write: if isAdmin();
-    }
-
-    // Billing Logs
-    match /billing_logs/{logId} {
-      allow read: if isAdmin();
-      allow create: if isAdmin();
-    }
-
-    // Match Session
-    match /match_session/{sessionId} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
-    }
-
-    // System Logs
-    match /system_logs/{logId} {
-      allow read: if isAdmin();
-      allow create: if isAdmin() || (isSignedIn() && logId.size() > 0); // Allow server-side logging
+    
+    // Connection test doc
+    match /_connection_test/status {
+      allow read: if true;
     }
   }
 }

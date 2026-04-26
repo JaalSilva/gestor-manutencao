@@ -102,10 +102,9 @@ interface Props {
   events: CalendarEvent[];
   monthName: string;
   settings: AppSettings;
-  isGuest?: boolean;
 }
 
-export const AgendaReport: React.FC<Props> = ({ events, monthName, settings, isGuest }) => {
+export const AgendaReport: React.FC<Props> = ({ events, monthName, settings }) => {
   const sortedEvents = [...events].sort((a, b) => {
     const dateA = new Date(a.date + 'T' + a.startTime).getTime();
     const dateB = new Date(b.date + 'T' + b.startTime).getTime();
@@ -132,7 +131,7 @@ export const AgendaReport: React.FC<Props> = ({ events, monthName, settings, isG
               <View style={styles.eventMeta}>
                 <Text>Início: {evt.startTime}</Text>
                 {evt.location && <Text>Local: {evt.location}</Text>}
-                <Text>Tipo: {evt.type.toUpperCase()}</Text>
+                <Text>Tipo: {(evt?.type || '').toUpperCase()}</Text>
               </View>
               {evt.description && (
                 <Text style={styles.description}>{evt.description}</Text>
@@ -140,14 +139,12 @@ export const AgendaReport: React.FC<Props> = ({ events, monthName, settings, isG
             </View>
           ))
         )}
-        
-        {isGuest && (
-          <View style={styles.warningBox}>
-            <Text style={styles.warningText}>
-              Dados podem estar errados favor verifique com um dos administradores que compõe a comissão de funcionamento.
-            </Text>
-          </View>
-        )}
+
+        <View style={styles.warningBox}>
+          <Text style={styles.warningText}>
+            Dados podem estar errados favor verifique com um dos administradores que compõe a comissão de funcionamento.
+          </Text>
+        </View>
 
         <Text style={styles.footer}>
           Documento gerado automaticamente pelo sistema de GESTÃO DE MANUTENÇÃO.

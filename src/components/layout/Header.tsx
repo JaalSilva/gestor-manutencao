@@ -36,28 +36,33 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, onNavigateToSet
           {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
 
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2">
-            <h2 className="text-[13px] font-black tracking-tight text-blue-600 uppercase">
-              GESTÃO DE MANUTENÇÃO
-            </h2>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-              onClick={onNavigateToSettings}
+        <div className="flex items-center gap-3">
+          {settings.appLogo ? (
+            <img src={settings.appLogo} alt="Logo" className="h-8 w-8 rounded-lg object-contain shadow-sm bg-white" />
+          ) : null}
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <h2 className="text-[13px] font-black tracking-tight text-blue-600 uppercase">
+                {settings.appName}
+              </h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                onClick={onNavigateToSettings}
+              >
+                <SettingsIcon className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+            <motion.p 
+              initial={{ opacity: 0.5 }}
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="text-[9px] font-bold text-slate-400 uppercase tracking-widest"
             >
-              <SettingsIcon className="h-3.5 w-3.5" />
-            </Button>
+              Complexos de salões do Reino
+            </motion.p>
           </div>
-          <motion.p 
-            initial={{ opacity: 0.5 }}
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            className="text-[9px] font-bold text-slate-400 uppercase tracking-widest"
-          >
-            Complexos de salões do Reino
-          </motion.p>
         </div>
       </div>
 

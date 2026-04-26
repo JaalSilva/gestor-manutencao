@@ -6,7 +6,6 @@ import {
   Palette, ClipboardCheck, RefreshCcw, ExternalLink
 } from 'lucide-react';
 import { usePanelStore } from '../store/usePanelStore';
-import { useAuth } from '../contexts/AuthContext';
 import { Team, Group, Member, TaskDefinition, AppSettings } from '../types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,7 +44,6 @@ export const PanelEditor: React.FC<{ panelId: string; onBack: () => void }> = ({
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [resetDefId, setResetDefId] = useState<string>('');
   const { panels, updatePanel, settings, taskDefinitions, clearMaintenanceHistory } = usePanelStore();
-  const { isGuest } = useAuth();
   const panel = panels.find(p => p.id === panelId);
 
   const handleResetHistory = () => {
@@ -176,7 +174,7 @@ export const PanelEditor: React.FC<{ panelId: string; onBack: () => void }> = ({
 
         <div className="flex items-center gap-3">
           <PDFDownloadLink
-            document={<A3Report panel={panel} settings={settings} isGuest={isGuest} />}
+            document={<A3Report panel={panel} settings={settings} />}
             fileName={`${panel.name}_A3.pdf`}
           >
             {({ loading }) => (
@@ -265,7 +263,6 @@ export const PanelEditor: React.FC<{ panelId: string; onBack: () => void }> = ({
                       onAddGroup={addGroup}
                       taskDefinitions={taskDefinitions}
                       settings={settings}
-                      isGuest={isGuest}
                     />
                   ))}
                   
@@ -333,10 +330,9 @@ interface SortableTeamCardProps {
   onAddGroup: (id: string) => void;
   taskDefinitions: TaskDefinition[];
   settings: AppSettings;
-  isGuest?: boolean;
 }
 
-const SortableTeamCard: React.FC<SortableTeamCardProps> = ({ team, onUpdateTeam, onAddGroup, taskDefinitions, settings, isGuest }) => {
+const SortableTeamCard: React.FC<SortableTeamCardProps> = ({ team, onUpdateTeam, onAddGroup, taskDefinitions, settings }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: team.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -485,7 +481,6 @@ const SortableTeamCard: React.FC<SortableTeamCardProps> = ({ team, onUpdateTeam,
                   teamName={team.name}
                   members={(team.groups || []).flatMap(g => (g.members || []).map(m => m.name)).filter(Boolean)}
                   date={new Date().toISOString()}
-                  isGuest={isGuest}
                 />
               }
               fileName={`OS_${team.name}.pdf`}

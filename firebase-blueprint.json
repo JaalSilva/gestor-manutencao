@@ -1,120 +1,98 @@
 {
   "entities": {
-    "Player": {
-      "title": "Player",
-      "description": "Athlete in the league",
+    "User": {
+      "title": "User",
+      "description": "User account for authentication",
       "type": "object",
       "properties": {
         "id": { "type": "string" },
-        "name": { "type": "string" },
-        "phone": { "type": "string" },
-        "congregation": { "type": "string" },
-        "age": { "type": "integer" },
-        "status_payment": { "type": "string", "enum": ["PAGO", "PENDENTE"] },
-        "payment_date": { "type": "string", "format": "date-time" },
-        "created_at": { "type": "string", "format": "date-time" },
-        "updated_at": { "type": "string", "format": "date-time" }
+        "login": { "type": "string" },
+        "password": { "type": "string", "description": "AES-256 encrypted password or hash" },
+        "role": { "type": "string" }
       },
-      "required": ["id", "name", "phone"]
+      "required": ["login", "password"]
     },
-    "Sender": {
-      "title": "Sender",
-      "description": "Authorized message sender",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "name": { "type": "string" },
-        "phone": { "type": "string" },
-        "status": { "type": "string", "enum": ["CONECTADO", "DESCONECTADO"] },
-        "created_at": { "type": "string", "format": "date-time" },
-        "updated_at": { "type": "string", "format": "date-time" }
-      }
-    },
-    "Attendance": {
-      "title": "Attendance",
-      "description": "Player attendance record",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "player_id": { "type": "string" },
-        "date": { "type": "string" },
-        "status": { "type": "string", "enum": ["PRESENTE", "AUSENTE", "JUSTIFICADO"] },
-        "created_at": { "type": "string", "format": "date-time" }
-      }
-    },
-    "FairPlay": {
-      "title": "FairPlay",
-      "description": "Fair Play and ranking event",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "player_id": { "type": "string" },
-        "score": { "type": "integer" },
-        "reason": { "type": "string" },
-        "category": { "type": "string", "enum": ["PRESENCA", "PAGAMENTO", "COMPORTAMENTO", "ADVERTENCIA", "GOL", "ASSISTENCIA"] },
-        "created_at": { "type": "string", "format": "date-time" }
-      }
-    },
-    "Match": {
-      "title": "Match",
-      "description": "Soccer match record",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "date": { "type": "string" },
-        "team_a_score": { "type": "integer" },
-        "team_b_score": { "type": "integer" },
-        "notes": { "type": "string" },
-        "created_at": { "type": "string", "format": "date-time" }
-      }
-    },
-    "AppSetting": {
-      "title": "AppSetting",
+    "Settings": {
+      "title": "Application Settings",
       "description": "Global application configuration",
       "type": "object",
       "properties": {
-        "key": { "type": "string" },
-        "value": { "type": "string" }
+        "appName": { "type": "string" },
+        "primaryColor": { "type": "string" },
+        "backgroundColor": { "type": "string" },
+        "darkMode": { "type": "boolean" },
+        "commissionMembers": { "type": "array" }
       }
     },
-    "BillingLog": {
-      "title": "BillingLog",
-      "description": "Log of a billing attempt",
+    "Panel": {
+      "title": "Maintenance Panel",
+      "description": "Operational panel with teams",
       "type": "object",
       "properties": {
         "id": { "type": "string" },
-        "player_id": { "type": "string" },
-        "sender_id": { "type": "string" },
-        "phone": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "teams": { "type": "array" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "TaskDefinition": {
+      "title": "Task Definition",
+      "description": "Technical maintenance data",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "frequency": { "type": "string" },
+        "periodsPerYear": { "type": "integer" }
+      }
+    },
+    "Task": {
+      "title": "Maintenance Task",
+      "description": "Executed maintenance record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "definitionId": { "type": "string" },
+        "periodIndex": { "type": "integer" },
+        "year": { "type": "integer" },
         "status": { "type": "string" },
-        "message": { "type": "string" },
-        "error_details": { "type": "string" },
-        "created_at": { "type": "string", "format": "date-time" }
+        "completedAt": { "type": "string" }
       }
     },
-    "SystemLog": {
-      "title": "SystemLog",
-      "description": "Critical operation audit log",
+    "Pendency": {
+      "title": "Maintenance Pendency",
+      "description": "Corrective maintenance pending",
       "type": "object",
       "properties": {
         "id": { "type": "string" },
-        "operation": { "type": "string" },
-        "entity": { "type": "string" },
-        "entity_id": { "type": "string" },
-        "details": { "type": "string" },
-        "created_at": { "type": "string", "format": "date-time" }
+        "reporter": { "type": "string" },
+        "area": { "type": "string" },
+        "criticality": { "type": "string" },
+        "cost": { "type": "number" },
+        "description": { "type": "string" }
+      }
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Financial record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string" },
+        "value": { "type": "number" },
+        "description": { "type": "string" },
+        "date": { "type": "string" }
       }
     }
   },
   "firestore": {
-    "/players": { "schema": "Player", "description": "Athletes list" },
-    "/senders": { "schema": "Sender", "description": "Message senders" },
-    "/attendance": { "schema": "Attendance", "description": "Attendance logs" },
-    "/fair_play": { "schema": "FairPlay", "description": "Ranking points" },
-    "/matches": { "schema": "Match", "description": "Match history" },
-    "/app_settings": { "schema": "AppSetting", "description": "App configuration" },
-    "/billing_logs": { "schema": "BillingLog", "description": "Billing activity" },
-    "/match_session": { "schema": "object", "description": "Current timer state" },
-    "/system_logs": { "schema": "SystemLog", "description": "Audit trails" }
+    "users": { "schema": "User", "description": "User accounts" },
+    "panels": { "schema": "Panel", "description": "Operational panels" },
+    "taskDefinitions": { "schema": "TaskDefinition", "description": "Technical library" },
+    "tasks": { "schema": "Task", "description": "Execution history" },
+    "pendencies": { "schema": "Pendency", "description": "Pending issues" },
+    "transactions": { "schema": "Transaction", "description": "Treasury records" },
+    "config/settings": { "schema": "Settings", "description": "Global settings" }
   }
 }

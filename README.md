@@ -1,27 +1,20 @@
-# Baba Finance & Billing System
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
 
-Professional Full-Stack Management Tool for sports group financial management, athlete billing, and match statistics.
+# Run and deploy your AI Studio app
 
-## Developed by
-**Jaal Silva**
+This contains everything you need to run your app locally.
 
-## Core Features
-- **Hybrid Domain Persistence**: Dual-layer storage using local SQLite (instant caching) and Firebase Firestore (cloud synchronization).
-- **Automated Billing**: Integration for athlete payment tracking with automatic Fair Play scoring incentives.
-- **Real-time Statistics**: Interactive dashboard for goal tracking, disciplinary records (fouls), and attendance history.
-- **Self-Healing Infrastructure**: Automatic recovery from Cloud propagation delays and ephemeral restart restoration.
+View your app in AI Studio: https://ai.studio/apps/751296e3-43e0-4fba-9be8-797474b04086
 
-## Tech Stack
-- **Frontend**: React 19, Vite, Tailwind CSS 4, Framer Motion, Lucide Icons.
-- **Backend**: Node.js, Express, Socket.IO.
-- **Database**: SQLite (better-sqlite3) & Firestore.
-- **Reporting**: jsPDF for financial and statistics export.
+## Run Locally
 
-## Deployment
-This system is ready for deployment on **Cloud Run** or **Vercel**.
+**Prerequisites:**  Node.js
 
-### Vercel Deployment Note
-Ensure you configure the `GOOGLE_CLOUD_PROJECT` and other Firebase environment variables in the Vercel dashboard.
 
----
-*© 2026 Developed by Jaal Silva. Enterprise Grade Solution.*
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

@@ -153,11 +153,10 @@ interface ServiceOrderPDFProps {
   teamName: string;
   members: string[];
   date: string;
-  isGuest?: boolean;
 }
 
 export const ServiceOrderPDF: React.FC<ServiceOrderPDFProps> = ({ 
-  unitName, task, teamName, members, date, isGuest 
+  unitName, task, teamName, members, date 
 }) => (
   <Document>
     <Page size="A4" style={styles.page}>
@@ -241,14 +240,7 @@ export const ServiceOrderPDF: React.FC<ServiceOrderPDFProps> = ({
 
       {/* Footer */}
       <View style={styles.footer}>
-        <View style={{ flex: 1 }}>
-          {isGuest && (
-            <Text style={{ color: '#ef4444', fontWeight: 'bold', fontSize: 7, marginBottom: 2 }}>
-              AVISO: Dados podem estar errados favor verifique com um dos administradores que compõe a comissão de funcionamento.
-            </Text>
-          )}
-          <Text style={styles.footerText}>Gerado em {format(new Date(), "dd/MM/yyyy HH:mm")}</Text>
-        </View>
+        <Text style={styles.footerText}>Gerado em {format(new Date(), "dd/MM/yyyy HH:mm")}</Text>
         <Text style={styles.footerText}>Documento Técnico Operacional - JW Hub Maintenance</Text>
       </View>
     </Page>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { 
-  LayoutDashboard, Library, 
+  LayoutDashboard, Library, FileText,
   AlertTriangle, Receipt, Calendar as CalendarIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -15,6 +15,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeView, setView }) => 
     { id: 'dashboard', icon: LayoutDashboard, label: 'Início' },
     { id: 'calendar', icon: CalendarIcon, label: 'Agenda' },
     { id: 'treasury', icon: Receipt, label: 'Financeiro' },
+    { id: 'service-orders', icon: FileText, label: 'OS' },
     { id: 'pending', icon: AlertTriangle, label: 'Pendências' },
     { id: 'library', icon: Library, label: 'Recursos' },
   ];

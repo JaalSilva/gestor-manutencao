@@ -160,10 +160,9 @@ interface Props {
   monthRef: string; // MM/YYYY
   transactions: Transaction[];
   settings: AppSettings;
-  isGuest?: boolean;
 }
 
-export const S26TReport: React.FC<Props> = ({ monthRef, transactions, settings, isGuest }) => {
+export const S26TReport: React.FC<Props> = ({ monthRef, transactions, settings }) => {
   const currentMonthDate = parse(monthRef, 'MM/yyyy', new Date());
   const monthStart = startOfMonth(currentMonthDate);
   
@@ -262,13 +261,11 @@ export const S26TReport: React.FC<Props> = ({ monthRef, transactions, settings, 
            </View>
         </View>
 
-        {isGuest && (
-          <View style={{ marginTop: 10, padding: 10, backgroundColor: '#fef2f2', borderLeftWidth: 3, borderLeftColor: '#ef4444' }}>
-            <Text style={{ fontSize: 7, color: '#991b1b', fontWeight: 'bold' }}>
-              AVISO: Dados podem estar errados favor verifique com um dos administradores que compõe a comissão de funcionamento.
-            </Text>
-          </View>
-        )}
+        <View style={{ marginTop: 10, padding: 10, backgroundColor: '#fef2f2', borderLeftWidth: 3, borderLeftColor: '#ef4444' }}>
+          <Text style={{ fontSize: 7, color: '#991b1b', fontWeight: 'bold' }}>
+            AVISO: Dados podem estar errados favor verifique com um dos administradores que compõe a comissão de funcionamento.
+          </Text>
+        </View>
 
         <View style={{ marginTop: 50, flexDirection: 'row', justifyContent: 'space-around' }}>
           <View style={{ width: '40%', borderTopWidth: 1, paddingTop: 5, textAlign: 'center' }}>

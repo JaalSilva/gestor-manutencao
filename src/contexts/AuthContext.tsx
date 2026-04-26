@@ -1,16 +1,20 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import api from '../lib/api';
 
 interface UserProxy {
   uid: string;
   login: string;
   role?: 'admin' | 'guest';
+  congregation?: string;
+  circuit?: string;
 }
 
 interface AuthContextType {
   user: UserProxy | null;
   loading: boolean;
   login: (username: string, pass: string) => Promise<void>;
+  register: (username: string, pass: string, congregation: string, circuit: string) => Promise<void>;
   loginAsGuest: () => Promise<void>;
   logout: () => Promise<void>;
   username: string | null;
@@ -34,29 +38,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const parsed = JSON.parse(saved);
       setUser(parsed);
       setUsername(parsed.login);
+    } else if (!token) {
+      // Auto-login as a public operator if no session exists
+      const publicUser: UserProxy = { uid: "public_operator", login: "Operador de Sincronismo", role: "admin" };
+      setUser(publicUser);
+      setUsername(publicUser.login);
     }
     setLoading(false);
   }, [token]);
 
   const login = async (usernameInput: string, pass: string) => {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ login: usernameInput, password: pass })
-      });
+      const result = await api.post('/api/auth/login', { login: usernameInput, password: pass });
+      const data = result.data;
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Falha na autenticação');
-      }
+      const userProfile = { 
+        uid: data.uid, 
+        login: data.login, 
+        role: data.role, 
+        congregation: data.congregation, 
+        circuit: data.circuit 
+      };
 
       localStorage.setItem('auth_token', data.token);
-      localStorage.setItem('auth_user', JSON.stringify({ uid: data.uid, login: data.login, role: data.role }));
+      localStorage.setItem('auth_user', JSON.stringify(userProfile));
       
       setToken(data.token);
-      setUser({ uid: data.uid, login: data.login, role: data.role });
+      setUser(userProfile);
       setUsername(data.login);
       
       toast.success(`Bem-vindo, ${data.login}!`);
@@ -66,18 +74,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const register = async (usernameInput: string, pass: string, congregation: string, circuit: string) => {
+    try {
+      const result = await api.post('/api/auth/register', { 
+        login: usernameInput, 
+        password: pass, 
+        congregation, 
+        circuit 
+      });
+      const data = result.data;
+
+      const userProfile = { 
+        uid: data.uid, 
+        login: data.login, 
+        role: data.role, 
+        congregation: data.congregation, 
+        circuit: data.circuit 
+      };
+
+      localStorage.setItem('auth_token', data.token);
+      localStorage.setItem('auth_user', JSON.stringify(userProfile));
+      
+      setToken(data.token);
+      setUser(userProfile);
+      setUsername(data.login);
+      
+      toast.success(`Conta criada com sucesso! Bem-vindo, ${data.login}`);
+    } catch (error: any) {
+      console.error("Registration Error:", error);
+      throw error;
+    }
+  };
+
   const loginAsGuest = async () => {
     try {
-      const response = await fetch('/api/auth/guest', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Falha ao entrar como convidado');
-      }
+      const result = await api.post('/api/auth/guest');
+      const data = result.data;
 
       localStorage.setItem('auth_token', data.token);
       localStorage.setItem('auth_user', JSON.stringify({ uid: data.uid, login: data.login, role: data.role }));

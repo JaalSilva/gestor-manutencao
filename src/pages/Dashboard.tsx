@@ -4,7 +4,7 @@ import {
   CheckCircle2, AlertCircle, 
   Wallet, ShieldAlert,
   ArrowRight, BellRing, Edit3, Trash2,
-  BadgeAlert, Clock
+  BadgeAlert, Clock, RefreshCw
 } from 'lucide-react';
 import { usePanelStore } from '../store/usePanelStore';
 import { GradientCard, SectionTitle } from '../components/shared/DesignElements';
@@ -19,11 +19,12 @@ import { toast } from 'sonner';
 import { 
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription 
 } from '@/components/ui/dialog';
+import { syncService } from '../services/syncService';
 
 export const Dashboard: React.FC<{ onEdit: (id: string) => void; onNavigate: (view: string) => void }> = ({ onEdit, onNavigate }) => {
   const { 
     panels, addPanel, updatePanel, deletePanel, tasks, taskDefinitions, 
-    pendencies, settings, transactions, 
+    pendencies, settings, transactions, events, serviceOrders,
     balanceAlertVisible, getBalance 
   } = usePanelStore();
   const currentYear = new Date().getFullYear();
@@ -31,6 +32,46 @@ export const Dashboard: React.FC<{ onEdit: (id: string) => void; onNavigate: (vi
   const [tempTitle, setTempTitle] = React.useState('');
   const [isDeletingPanel, setIsDeletingPanel] = React.useState<string | null>(null);
   const [isSafetyModalOpen, setIsSafetyModalOpen] = React.useState(false);
+  const [isSyncing, setIsSyncing] = React.useState(false);
+  const [googleConnected, setGoogleConnected] = React.useState<boolean | null>(null);
+
+  React.useEffect(() => {
+    syncService.getGoogleSyncStatus().then(status => setGoogleConnected(status.connected));
+  }, []);
+
+  const handleSyncToSheets = async () => {
+    if (!googleConnected) {
+      try {
+        const authUrl = await syncService.getGoogleAuthUrl();
+        window.location.href = authUrl;
+        return;
+      } catch (err) {
+        toast.error("Erro ao iniciar conexão com Google.");
+        return;
+      }
+    }
+
+    setIsSyncing(true);
+    const id = toast.loading("Preparando sincronização...");
+    
+    try {
+      toast.loading("Sincronizando...", { id });
+      await syncService.syncToGoogleSheets({
+        treasury: transactions,
+        tasks: tasks,
+        pendencies: pendencies,
+        calendar: events,
+        serviceOrders: serviceOrders,
+        definitions: taskDefinitions
+      });
+      toast.success("Concluído! Planilha atualizada.", { id });
+    } catch (err: any) {
+      console.error("Sync error:", err);
+      toast.error(err.message || "Falha na sincronização", { id });
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   const handleCreateNew = () => {
     const id = `panel-${Date.now()}`;
@@ -150,6 +191,19 @@ export const Dashboard: React.FC<{ onEdit: (id: string) => void; onNavigate: (vi
           />
         </div>
         <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            disabled={isSyncing}
+            className={cn(
+              "h-10 px-4 font-bold shadow-sm transition-all gap-2",
+              googleConnected ? "bg-white" : "bg-blue-600 text-white hover:bg-blue-700 border-none"
+            )} 
+            onClick={handleSyncToSheets}
+          >
+            <RefreshCw className={cn("h-4 w-4", googleConnected ? "text-green-600" : "text-white", isSyncing && "animate-spin")} />
+            {googleConnected ? "Sincronizar Dados" : "Conectar Google"}
+          </Button>
           <Button variant="outline" size="sm" className="h-10 px-4 font-bold shadow-sm bg-white" onClick={() => onNavigate('treasury')}>
             <Wallet className="h-4 w-4 mr-2 text-blue-500" />
             Tesouraria

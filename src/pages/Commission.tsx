@@ -17,11 +17,9 @@ import { motion, AnimatePresence } from 'motion/react';
 
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { AnnualReport } from '../services/pdf/AnnualReport';
-import { useAuth } from '../contexts/AuthContext';
 
 export const Commission: React.FC = () => {
   const { settings, upsertCommissionMember, deleteCommissionMember, tasks, taskDefinitions } = usePanelStore();
-  const { isGuest } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [editingMember, setEditingMember] = useState<{ id?: string, name: string, role: string, congregation: string, circuit: string }>({
     name: '',
@@ -82,7 +80,6 @@ export const Commission: React.FC = () => {
               taskDefinitions={taskDefinitions}
               commissionMembers={settings.commissionMembers}
               appName={settings.appName}
-              isGuest={isGuest}
             />}
             fileName={`Relatorio_Anual_${new Date().getFullYear()}.pdf`}
           >

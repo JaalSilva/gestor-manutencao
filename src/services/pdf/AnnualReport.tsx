@@ -151,11 +151,10 @@ interface AnnualReportProps {
   taskDefinitions: TaskDefinition[];
   commissionMembers: CommissionMember[];
   appName: string;
-  isGuest?: boolean;
 }
 
 export const AnnualReport: React.FC<AnnualReportProps> = ({ 
-  year, transactions, tasks, taskDefinitions, commissionMembers, appName, isGuest
+  year, transactions, tasks, taskDefinitions, commissionMembers, appName 
 }) => {
   const annualRevenue = (transactions || [])
     .filter(t => t.type === 'deposit' && new Date(t.date).getFullYear() === year)
@@ -270,13 +269,11 @@ export const AnnualReport: React.FC<AnnualReportProps> = ({
           </View>
         </View>
 
-        {isGuest && (
-          <View style={{ marginTop: 10, padding: 10, backgroundColor: '#fef2f2', borderLeftWidth: 3, borderLeftColor: '#ef4444' }}>
-            <Text style={{ fontSize: 7, color: '#991b1b', fontWeight: 'bold' }}>
-              AVISO: Dados podem estar errados favor verifique com um dos administradores que compõe a comissão de funcionamento.
-            </Text>
-          </View>
-        )}
+        <View style={{ marginTop: 10, padding: 10, backgroundColor: '#fef2f2', borderLeftWidth: 3, borderLeftColor: '#ef4444' }}>
+          <Text style={{ fontSize: 7, color: '#991b1b', fontWeight: 'bold' }}>
+            AVISO: Dados podem estar errados favor verifique com um dos administradores que compõe a comissão de funcionamento.
+          </Text>
+        </View>
 
         {/* Signatures */}
         <View style={styles.signatureSection}>

@@ -81,12 +81,16 @@ export interface CommissionMember {
 
 export interface AppSettings {
   appName: string;
+  appLogo?: string; // URL or Base64
   primaryColor: string;
   backgroundColor: string;
   darkMode: boolean;
   accentColors: string[];
   clearingPassword?: string;
   commissionMembers: CommissionMember[];
+  osTitle?: string;
+  osSubTitle?: string;
+  nextOsNumber?: number;
 }
 
 export interface Team {
@@ -123,6 +127,76 @@ export interface CalendarEvent {
   location?: string;
 }
 
+export interface ServiceOrderItem {
+  id: string;
+  description: string;
+  service: string;
+  material: string;
+  prevValue: string;
+  realValue: string;
+  status: 'E' | 'P' | 'N'; // Executado, Pendente, Não Executado
+}
+
+export interface ServiceOrder {
+  id: string;
+  osNumber: string;
+  date: string;
+  period: string; // ex: "07/01/2024 até 07/08/2024"
+  
+  // Informações Gerais
+  unit: string;
+  requester: string;
+  responsible: string;
+  executingSector: string;
+  maintenanceType: string;
+  costCenter: string;
+  account: string;
+  location: string;
+  provider: string;
+  brandModel: string;
+  serialNumber: string;
+  client: string;
+
+  // Padrões de Execução
+  deliveryDeadline: string;
+  executionTime: string;
+  interferenceTime: string;
+  priority: 'Baixa' | 'Média' | 'Alta';
+  warranty: string;
+
+  // Identificação do Ambiente
+  buildingName: string;
+  address: string;
+  complement: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  phone: string;
+  fax: string;
+  activityType: string;
+  climatizedArea: string;
+  fixedOccupants: string;
+  floatingOccupants: string;
+
+  // Responsável Técnico
+  techName: string;
+  techCpf: string;
+  techReg: string;
+  techArtOs: string;
+  techAddress: string;
+  techNeighborhood: string;
+  techArtFun: string;
+  techZip: string;
+  techPhone: string;
+  techCity: string;
+
+  requestedService: string;
+  observations: string;
+  planObservations: string;
+  items: ServiceOrderItem[];
+}
+
 export type AppState = {
   panels: PanelTemplate[];
   currentPanelId: string | null;
@@ -132,6 +206,7 @@ export type AppState = {
   pendencies: MaintenancePending[];
   transactions: Transaction[];
   events: CalendarEvent[];
+  serviceOrders: ServiceOrder[];
   balanceAlertVisible: boolean;
   isHydrated: boolean;
   _checkBalanceAlert: () => void;
@@ -176,4 +251,9 @@ export type AppState = {
   addEvent: (event: CalendarEvent) => Promise<void>;
   updateEvent: (id: string, event: Partial<CalendarEvent>) => Promise<void>;
   deleteEvent: (id: string) => Promise<void>;
+
+  // Service Orders
+  addServiceOrder: (os: ServiceOrder) => Promise<void>;
+  updateServiceOrder: (id: string, os: Partial<ServiceOrder>) => Promise<void>;
+  deleteServiceOrder: (id: string) => Promise<void>;
 }
